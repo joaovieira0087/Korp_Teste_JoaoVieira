@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Korp.Estoque.Api/Korp.Estoque.Api.csproj" />
+    <Project Path="src/Korp.Estoque.Application/Korp.Estoque.Application.csproj" />
+    <Project Path="src/Korp.Estoque.Infrastructure/Korp.Estoque.Infrastructure.csproj" />
+    <Project Path="src/Korp.Faturamento.Api/Korp.Faturamento.Api.csproj" />
+    <Project Path="src/Korp.Faturamento.Application/Korp.Faturamento.Application.csproj" />
+    <Project Path="src/Korp.Faturamento.Infrastructure/Korp.Faturamento.Infrastructure.csproj" />
+    <Project Path="src/Korp.SharedKernel/Korp.SharedKernel.csproj" />
+  </Folder>
+</Solution>
