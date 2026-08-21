@@ -1,5 +1,6 @@
 ﻿using Korp.Estoque.Application.Produtos;
 using Microsoft.EntityFrameworkCore;
+using Korp.Estoque.Application.Baixas;
 
 namespace Korp.Estoque.Infrastructure.Persistencia;
 
@@ -43,4 +44,28 @@ public sealed class ProdutoRepositorio(EstoqueDbContext contexto) : IProdutoRepo
        => await contexto.Produtos
            .Where(p => identificadores.Contains(p.Id))
            .ToListAsync(cancelamento);
+
+    public async Task<IReadOnlyList<Produto>> ObterPorIdsComBloqueioAsync(
+    IReadOnlyCollection<Guid> identificadores, CancellationToken cancelamento)
+    {
+        var ordenados = identificadores.OrderBy(id => id).ToArray();
+
+        return await contexto.Produtos
+            .FromSql($"""
+                SELECT * FROM produtos
+                WHERE id = ANY({ordenados})
+                ORDER BY id
+                FOR UPDATE
+                """)
+            .ToListAsync(cancelamento);
+    }
+
+    public async Task<BaixaProcessada?> ObterBaixaProcessadaAsync(
+        Guid notaFiscalId, CancellationToken cancelamento)
+        => await contexto.BaixasProcessadas
+            .FirstOrDefaultAsync(b => b.NotaFiscalId == notaFiscalId, cancelamento);
+
+    public async Task RegistrarBaixaAsync(
+        BaixaProcessada baixa, CancellationToken cancelamento)
+        => await contexto.BaixasProcessadas.AddAsync(baixa, cancelamento);
 }

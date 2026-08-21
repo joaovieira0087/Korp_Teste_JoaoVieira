@@ -3,6 +3,7 @@ using Korp.SharedKernel.Excecoes;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Korp.SharedKernel.Web;
@@ -21,6 +22,7 @@ public sealed class TratadorGlobalDeExcecoes(ILogger<TratadorGlobalDeExcecoes> l
             ExcecaoNaoEncontrado => (StatusCodes.Status404NotFound, "Recurso não encontrado"),
             ExcecaoConflito => (StatusCodes.Status409Conflict, "Conflito de estado"),
             ExcecaoRegraDeNegocio => (StatusCodes.Status400BadRequest, "Regra de negócio violada"),
+            DbUpdateException e when EhViolacaoDeChaveDuplicada(e) => (StatusCodes.Status409Conflict, "Operação concorrente"),
             _ => (StatusCodes.Status500InternalServerError, "Erro interno")
         };
 
@@ -48,4 +50,8 @@ public sealed class TratadorGlobalDeExcecoes(ILogger<TratadorGlobalDeExcecoes> l
         await contexto.Response.WriteAsJsonAsync(problema, cancelamento);
         return true;
     }
+
+    private static bool EhViolacaoDeChaveDuplicada(Exception excecao)
+    => excecao.InnerException?.GetType().Name == "PostgresException"
+       && excecao.InnerException.Message.Contains("23505");
 }

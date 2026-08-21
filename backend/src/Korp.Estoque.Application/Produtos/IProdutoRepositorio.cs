@@ -1,4 +1,5 @@
 ﻿namespace Korp.Estoque.Application.Produtos;
+using Korp.Estoque.Application.Baixas;
 
 public interface IProdutoRepositorio
 {
@@ -15,4 +16,12 @@ public interface IProdutoRepositorio
 
     Task<IReadOnlyList<Produto>> ObterPorIdsAsync(
     IReadOnlyCollection<Guid> identificadores, CancellationToken cancelamento);
+
+    Task<IReadOnlyList<Produto>> ObterPorIdsComBloqueioAsync(
+       IReadOnlyCollection<Guid> identificadores, CancellationToken cancelamento);
+
+    Task<BaixaProcessada?> ObterBaixaProcessadaAsync(
+        Guid notaFiscalId, CancellationToken cancelamento);
+
+    Task RegistrarBaixaAsync(BaixaProcessada baixa, CancellationToken cancelamento);
 }

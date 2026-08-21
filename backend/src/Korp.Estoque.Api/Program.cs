@@ -1,12 +1,12 @@
+using System.Text.Json.Serialization;
 using Korp.Estoque.Api.Falhas;
-using Korp.Estoque.Application;
 using Korp.Estoque.Application.Baixas;
+using Korp.Estoque.Application.Comum;
 using Korp.Estoque.Application.Produtos;
 using Korp.Estoque.Infrastructure;
 using Korp.Estoque.Infrastructure.Persistencia;
 using Korp.SharedKernel.Web;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
 
 var construtor = WebApplication.CreateBuilder(args);
 
@@ -15,18 +15,20 @@ construtor.Services.AddControllers()
     {
         opcoes.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+
 construtor.Services.AddOpenApi();
 
-// Tratamento de erros: ProblemDetails + o tratador global do SharedKernel.
+// Tratamento de erros: ProblemDetails + tratador global
 construtor.Services.AddProblemDetails();
 construtor.Services.AddExceptionHandler<TratadorGlobalDeExcecoes>();
 
 construtor.Services.AdicionarInfraestrutura(construtor.Configuration);
 construtor.Services.AddScoped<ServicoProdutos>();
 
-// Registros para resiliência e baixas de estoque
+// Registros para resiliência, baixas de estoque e transação
 construtor.Services.AddSingleton<ControleDeFalha>();
 construtor.Services.AddScoped<ServicoBaixas>();
+construtor.Services.AddScoped<IUnidadeDeTrabalho, UnidadeDeTrabalho>();
 
 var app = construtor.Build();
 
