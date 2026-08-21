@@ -37,4 +37,10 @@ public sealed class ProdutoRepositorio(EstoqueDbContext contexto) : IProdutoRepo
 
     public Task SalvarAlteracoesAsync(CancellationToken cancelamento)
         => contexto.SaveChangesAsync(cancelamento);
+
+    public async Task<IReadOnlyList<Produto>> ObterPorIdsAsync(
+       IReadOnlyCollection<Guid> identificadores, CancellationToken cancelamento)
+       => await contexto.Produtos
+           .Where(p => identificadores.Contains(p.Id))
+           .ToListAsync(cancelamento);
 }

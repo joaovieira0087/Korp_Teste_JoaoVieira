@@ -1,49 +1,68 @@
 @host = http://localhost:5002
+@estoque = http://localhost:5001
 @produtoA = 01a021de-ede6-73b1-9f60-1d8d68cda028
-@produtoB = 01a021f7-162d-7345-92c9-be765d708818
 
-### Criar nota vazia
+### 1. Conferir o saldo antes
+GET {{estoque}}/api/produtos/{{produtoA}}
+
+### 2. Criar nota com 2 unidades
 POST {{host}}/api/notas-fiscais
 Content-Type: application/json
 
-{ "itens": [] }
+{ "itens": [ { "produtoId": "{{produtoA}}", "quantidade": 2 } ] }
 
-### Criar nota já com itens
+### 3. Imprimir (cole o id da nota criada)
+POST {{host}}/api/notas-fiscais/01a022a2-c3a0-7b67-99e9-0e82546b4816/imprimir
+
+### 4. Conferir o saldo depois -> deve ter caído 2
+GET {{estoque}}/api/produtos/{{produtoA}}
+
+### 5. Imprimir de novo -> 409, nota já fechada
+POST {{host}}/api/notas-fiscais/01a022a2-c3a0-7b67-99e9-0e82546b4816/imprimir
+
+### --- CENÁRIO DE FALHA ---
+
+### 6. Derrubar o estoque
+POST {{estoque}}/api/simulacao-de-falha/ativar
+Content-Type: application/json
+
+{ "modo": "Indisponivel" }
+
+### 7. Criar outra nota -> 503, o estoque nem responde a consulta do produto
 POST {{host}}/api/notas-fiscais
 Content-Type: application/json
 
-{
-  "itens": [
-    { "produtoId": "{{produtoA}}", "codigoProduto": "PRF-M8",
-      "descricaoProduto": "Parafuso sextavado M8", "quantidade": 2 },
-    { "produtoId": "{{produtoB}}", "codigoProduto": "PRF-M9",
-      "descricaoProduto": "Parafuso sextavado M9", "quantidade": 5 }
-  ]
-}
+{ "itens": [ { "produtoId": "{{produtoA}}", "quantidade": 1 } ] }
 
-### Listar todas
-GET {{host}}/api/notas-fiscais
+### 8. Religar o estoque
+POST {{estoque}}/api/simulacao-de-falha/desativar
 
-### Listar só as abertas
-GET {{host}}/api/notas-fiscais?status=Aberta
+### 9. Repetir o passo 7 -> agora funciona (recuperação)
 
-### Adicionar item (troque o id pela nota criada acima)
-POST {{host}}/api/notas-fiscais/01a02242-2f19-70ae-b002-0dda48b4206e/itens
+### --- CENÁRIO DE LENTIDÃO ---
+
+### 10. Ativar lentidão
+POST {{estoque}}/api/simulacao-de-falha/ativar
 Content-Type: application/json
 
-{ "produtoId": "{{produtoA}}", "codigoProduto": "PRF-M8",
-  "descricaoProduto": "Parafuso sextavado M8", "quantidade": 3 }
+{ "modo": "Lentidao" }
 
-### Erro esperado: quantidade zero -> 400
-POST {{host}}/api/notas-fiscais/01a02242-2f19-70ae-b002-0dda48b4206e/itens
+### 11. Criar nota -> 503 por timeout, após ~20s
+POST {{host}}/api/notas-fiscais
 Content-Type: application/json
 
-{
-  "produtoId": "01a021de-ede6-73b1-9f60-1d8d68cda028",
-  "codigoProduto": "PRF-M8",
-  "descricaoProduto": "Parafuso sextavado M8",
-  "quantidade": 0
-}
+{ "itens": [ { "produtoId": "{{produtoA}}", "quantidade": 1 } ] }
 
-### Erro esperado: nota inexistente -> 404
-GET {{host}}/api/notas-fiscais/00000000-0000-0000-0000-000000000000
+### 12. Desligar
+POST {{estoque}}/api/simulacao-de-falha/desativar
+
+### --- SALDO INSUFICIENTE ---
+
+### 13. Criar nota pedindo mais do que existe
+POST {{host}}/api/notas-fiscais
+Content-Type: application/json
+
+{ "itens": [ { "produtoId": "{{produtoA}}", "quantidade": 99999 } ] }
+
+### 14. Imprimir -> 409 com a mensagem vinda do Estoque
+POST {{host}}/api/notas-fiscais/01a022a2-c3a0-7b67-99e9-0e82546b4816/imprimir

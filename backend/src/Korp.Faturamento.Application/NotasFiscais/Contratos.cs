@@ -1,7 +1,6 @@
 ﻿namespace Korp.Faturamento.Application.NotasFiscais;
 
-public sealed record ItemRequisicao(
-    Guid ProdutoId, string CodigoProduto, string DescricaoProduto, int Quantidade);
+public sealed record ItemRequisicao(Guid ProdutoId, int Quantidade);
 
 public sealed record CriarNotaFiscalRequisicao(IReadOnlyList<ItemRequisicao>? Itens);
 
