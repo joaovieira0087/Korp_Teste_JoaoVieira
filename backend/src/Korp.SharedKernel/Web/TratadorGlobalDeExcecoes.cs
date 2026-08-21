@@ -17,6 +17,7 @@ public sealed class TratadorGlobalDeExcecoes(ILogger<TratadorGlobalDeExcecoes> l
     {
         var (status, titulo) = excecao switch
         {
+            ExcecaoServicoIndisponivel => (StatusCodes.Status503ServiceUnavailable,"Serviço indisponível"),
             ExcecaoNaoEncontrado => (StatusCodes.Status404NotFound, "Recurso não encontrado"),
             ExcecaoConflito => (StatusCodes.Status409Conflict, "Conflito de estado"),
             ExcecaoRegraDeNegocio => (StatusCodes.Status400BadRequest, "Regra de negócio violada"),

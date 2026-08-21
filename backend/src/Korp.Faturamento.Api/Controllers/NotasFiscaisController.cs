@@ -35,4 +35,9 @@ public sealed class NotasFiscaisController(ServicoNotasFiscais servico) : Contro
     public async Task<ActionResult<NotaFiscalResposta>> RemoverItem(
         Guid id, Guid produtoId, CancellationToken cancelamento)
         => Ok(await servico.RemoverItemAsync(id, produtoId, cancelamento));
+
+    [HttpPost("{id:guid}/imprimir")]
+    public async Task<ActionResult<NotaFiscalResposta>> Imprimir(
+        Guid id, CancellationToken cancelamento)
+        => Ok(await servico.ImprimirAsync(id, cancelamento));
 }
