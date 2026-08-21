@@ -59,19 +59,26 @@ public sealed class EstoqueHttpClient(
                 "O serviço de estoque está indisponível no momento. " +
                 "Tente novamente em alguns instantes.");
         }
+        catch (OperationCanceledException) when (!cancelamento.IsCancellationRequested)
+        {
+            registrador.LogWarning("Tempo esgotado ao chamar o serviço de estoque.");
+            throw new ExcecaoServicoIndisponivel(
+                "O serviço de estoque demorou demais para responder. " +
+                "Nenhuma alteração foi feita.");
+        }
         catch (TimeoutRejectedException)
         {
             registrador.LogWarning("Timeout ao chamar o serviço de estoque.");
             throw new ExcecaoServicoIndisponivel(
                 "O serviço de estoque demorou demais para responder. " +
-                "A nota não foi impressa e continua aberta.");
+                "Nenhuma alteração foi feita.");
         }
         catch (HttpRequestException excecao)
         {
             registrador.LogWarning(excecao, "Falha de rede ao chamar o serviço de estoque.");
             throw new ExcecaoServicoIndisponivel(
                 "Não foi possível contatar o serviço de estoque. " +
-                "A nota não foi impressa e continua aberta.");
+                "Nenhuma alteração foi feita.");
         }
     }
 
@@ -92,8 +99,8 @@ public sealed class EstoqueHttpClient(
             HttpStatusCode.NotFound => new ExcecaoNaoEncontrado(problema),
             HttpStatusCode.BadRequest => new ExcecaoRegraDeNegocio(problema),
             _ => new ExcecaoServicoIndisponivel(
-                                             "O serviço de estoque respondeu com erro. " +
-                                             "A nota não foi impressa.")
+                "O serviço de estoque está indisponível no momento. " +
+                "Nenhuma alteração foi feita.")
         };
     }
 
