@@ -1,6 +1,28 @@
-@Korp.Estoque.Api_HostAddress = http://localhost:5119
+@host = http://localhost:5119
 
-GET {{Korp.Estoque.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### Criar produto
+POST {{host}}/api/produtos
+Content-Type: application/json
 
-###
+{ "codigo": "PRF-M8", "descricao": "Parafuso sextavado M8", "saldo": 10 }
+
+### Listar
+GET {{host}}/api/produtos
+
+### Buscar com filtro
+GET {{host}}/api/produtos?filtro=parafuso
+
+### Erro esperado: código duplicado -> 409
+POST {{host}}/api/produtos
+Content-Type: application/json
+
+{ "codigo": "PRF-M8", "descricao": "Outro qualquer", "saldo": 5 }
+
+### Erro esperado: saldo negativo -> 400
+POST {{host}}/api/produtos
+Content-Type: application/json
+
+{ "codigo": "XYZ-1", "descricao": "Teste", "saldo": -3 }
+
+### Erro esperado: id inexistente -> 404
+GET {{host}}/api/produtos/00000000-0000-0000-0000-000000000000
