@@ -1,6 +1,49 @@
-@Korp.Faturamento.Api_HostAddress = http://localhost:5054
+@host = http://localhost:5002
+@produtoA = 01a021de-ede6-73b1-9f60-1d8d68cda028
+@produtoB = 01a021f7-162d-7345-92c9-be765d708818
 
-GET {{Korp.Faturamento.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### Criar nota vazia
+POST {{host}}/api/notas-fiscais
+Content-Type: application/json
 
-###
+{ "itens": [] }
+
+### Criar nota já com itens
+POST {{host}}/api/notas-fiscais
+Content-Type: application/json
+
+{
+  "itens": [
+    { "produtoId": "{{produtoA}}", "codigoProduto": "PRF-M8",
+      "descricaoProduto": "Parafuso sextavado M8", "quantidade": 2 },
+    { "produtoId": "{{produtoB}}", "codigoProduto": "PRF-M9",
+      "descricaoProduto": "Parafuso sextavado M9", "quantidade": 5 }
+  ]
+}
+
+### Listar todas
+GET {{host}}/api/notas-fiscais
+
+### Listar só as abertas
+GET {{host}}/api/notas-fiscais?status=Aberta
+
+### Adicionar item (troque o id pela nota criada acima)
+POST {{host}}/api/notas-fiscais/01a02242-2f19-70ae-b002-0dda48b4206e/itens
+Content-Type: application/json
+
+{ "produtoId": "{{produtoA}}", "codigoProduto": "PRF-M8",
+  "descricaoProduto": "Parafuso sextavado M8", "quantidade": 3 }
+
+### Erro esperado: quantidade zero -> 400
+POST {{host}}/api/notas-fiscais/01a02242-2f19-70ae-b002-0dda48b4206e/itens
+Content-Type: application/json
+
+{
+  "produtoId": "01a021de-ede6-73b1-9f60-1d8d68cda028",
+  "codigoProduto": "PRF-M8",
+  "descricaoProduto": "Parafuso sextavado M8",
+  "quantidade": 0
+}
+
+### Erro esperado: nota inexistente -> 404
+GET {{host}}/api/notas-fiscais/00000000-0000-0000-0000-000000000000

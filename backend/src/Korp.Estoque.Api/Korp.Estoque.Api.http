@@ -1,10 +1,10 @@
-@host = http://localhost:5119
+@host = http://localhost:5001
 
 ### Criar produto
 POST {{host}}/api/produtos
 Content-Type: application/json
 
-{ "codigo": "PRF-M8", "descricao": "Parafuso sextavado M8", "saldo": 10 }
+{ "codigo": "PRF-M9", "descricao": "Parafuso sextavado M8", "saldo": 10 }
 
 ### Listar
 GET {{host}}/api/produtos
