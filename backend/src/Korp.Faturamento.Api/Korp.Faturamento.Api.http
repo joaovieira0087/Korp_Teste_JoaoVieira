@@ -1,68 +1,56 @@
 @host = http://localhost:5002
 @estoque = http://localhost:5001
-@produtoA = 01a021de-ede6-73b1-9f60-1d8d68cda028
+@produtoA = 01a0267d-11ed-70c2-a4dc-4fbed8742046
 
-### 1. Conferir o saldo antes
-GET {{estoque}}/api/produtos/{{produtoA}}
-
-### 2. Criar nota com 2 unidades
+### Criar Nota Fiscal
 POST {{host}}/api/notas-fiscais
 Content-Type: application/json
 
-{ "itens": [ { "produtoId": "{{produtoA}}", "quantidade": 2 } ] }
+{
+  "itens": [
+    {
+      "produtoId": "{{produtoA}}",
+      "quantidade": 1
+    }
+  ]
+}
 
-### 3. Imprimir (cole o id da nota criada)
-POST {{host}}/api/notas-fiscais/01a022a2-c3a0-7b67-99e9-0e82546b4816/imprimir
-
-### 4. Conferir o saldo depois -> deve ter caído 2
-GET {{estoque}}/api/produtos/{{produtoA}}
-
-### 5. Imprimir de novo -> 409, nota já fechada
-POST {{host}}/api/notas-fiscais/01a022a2-c3a0-7b67-99e9-0e82546b4816/imprimir
-
-### --- CENÁRIO DE FALHA ---
-
-### 6. Derrubar o estoque
-POST {{estoque}}/api/simulacao-de-falha/ativar
+### 1. Criar produto novo com saldo
+# @name criarProduto
+POST {{estoque}}/api/produtos
 Content-Type: application/json
 
-{ "modo": "Indisponivel" }
+{
+  "codigo": "CONC-01",
+  "descricao": "Produto para teste de concorrencia",
+  "saldo": 1
+}
 
-### 7. Criar outra nota -> 503, o estoque nem responde a consulta do produto
+### 2. Nota A pedindo 1 unidade (Execute e guarde o id)
 POST {{host}}/api/notas-fiscais
 Content-Type: application/json
 
-{ "itens": [ { "produtoId": "{{produtoA}}", "quantidade": 1 } ] }
+{
+  "itens": [
+    {
+      "produtoId": "{{criarProduto.response.body.id}}",
+      "quantidade": 1
+    }
+  ]
+}
 
-### 8. Religar o estoque
-POST {{estoque}}/api/simulacao-de-falha/desativar
-
-### 9. Repetir o passo 7 -> agora funciona (recuperação)
-
-### --- CENÁRIO DE LENTIDÃO ---
-
-### 10. Ativar lentidão
-POST {{estoque}}/api/simulacao-de-falha/ativar
-Content-Type: application/json
-
-{ "modo": "Lentidao" }
-
-### 11. Criar nota -> 503 por timeout, após ~20s
+### 3. Nota B pedindo 1 unidade (Execute e guarde o id)
 POST {{host}}/api/notas-fiscais
 Content-Type: application/json
 
-{ "itens": [ { "produtoId": "{{produtoA}}", "quantidade": 1 } ] }
+{
+  "itens": [
+    {
+      "produtoId": "{{criarProduto.response.body.id}}",
+      "quantidade": 1
+    }
+  ]
+}
 
-### 12. Desligar
-POST {{estoque}}/api/simulacao-de-falha/desativar
-
-### --- SALDO INSUFICIENTE ---
-
-### 13. Criar nota pedindo mais do que existe
-POST {{host}}/api/notas-fiscais
-Content-Type: application/json
-
-{ "itens": [ { "produtoId": "{{produtoA}}", "quantidade": 99999 } ] }
-
-### 14. Imprimir -> 409 com a mensagem vinda do Estoque
-POST {{host}}/api/notas-fiscais/01a022a2-c3a0-7b67-99e9-0e82546b4816/imprimir
+### 4. Confirmar saldo inicial = 1
+GET {{estoque}}/api/produtos/{{criarProduto.response.body.id}}

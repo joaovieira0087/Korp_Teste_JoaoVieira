@@ -1,10 +1,14 @@
 @host = http://localhost:5001
 
 ### Criar produto
-POST {{host}}/api/produtos
+POST http://localhost:5001/api/produtos
 Content-Type: application/json
 
-{ "codigo": "PRF-M9", "descricao": "Parafuso sextavado M8", "saldo": 10 }
+{
+  "codigo": "TESTE-CONC-01",
+  "descricao": "Parafuso Teste Concorrencia",
+  "saldo": 1
+}
 
 ### Listar
 GET {{host}}/api/produtos
@@ -26,3 +30,4 @@ Content-Type: application/json
 
 ### Erro esperado: id inexistente -> 404
 GET {{host}}/api/produtos/00000000-0000-0000-0000-000000000000
+
