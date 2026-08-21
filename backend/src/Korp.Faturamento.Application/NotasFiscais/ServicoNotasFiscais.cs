@@ -66,7 +66,8 @@ public sealed class ServicoNotasFiscais(INotaFiscalRepositorio repositorio)
             nota.Status.ToString(),
             nota.CriadaEm,
             nota.FechadaEm,
-            nota.Itens
+             nota.Itens
+                .OrderBy(i => i.CodigoProduto)
                 .Select(i => new ItemResposta(
                     i.ProdutoId, i.CodigoProduto, i.DescricaoProduto, i.Quantidade))
                 .ToList(),
