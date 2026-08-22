@@ -30,9 +30,18 @@ construtor.Services.AddSingleton<ControleDeFalha>();
 construtor.Services.AddScoped<ServicoBaixas>();
 construtor.Services.AddScoped<IUnidadeDeTrabalho, UnidadeDeTrabalho>();
 
+const string PoliticaCors = "frontend";
+
+construtor.Services.AddCors(opcoes =>
+    opcoes.AddPolicy(PoliticaCors, politica => politica
+        .WithOrigins("http://localhost:4200")
+        .AllowAnyHeader()
+        .AllowAnyMethod()));
+
 var app = construtor.Build();
 
 app.UseExceptionHandler();
+app.UseCors(PoliticaCors);
 app.UseMiddleware<MiddlewareDeFalhaSimulada>();
 
 if (app.Environment.IsDevelopment())

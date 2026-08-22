@@ -1,0 +1,43 @@
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.tabela {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.alinhado-direita {
+  text-align: right;
+}
+
+.linha-clicavel {
+  cursor: pointer;
+}
+
+.linha-clicavel:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.etiqueta {
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.etiqueta-fechada {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.vazio {
+  text-align: center;
+  padding: 2rem;
+  opacity: 0.6;
+}

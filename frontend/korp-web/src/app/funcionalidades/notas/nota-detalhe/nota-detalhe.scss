@@ -1,0 +1,40 @@
+.cartao {
+  margin-top: 1rem;
+}
+
+.titulo-secao {
+  padding: 1rem 1rem 0;
+  font-size: 1rem;
+}
+
+.linha-formulario {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.campo-produto {
+  flex: 1 1 320px;
+}
+
+.campo-quantidade {
+  flex: 0 0 140px;
+}
+
+.texto-botao {
+  margin-left: 0.4rem;
+}
+
+.tabela {
+  width: 100%;
+}
+
+.alinhado-direita {
+  text-align: right;
+}
+
+.vazio {
+  padding: 1rem;
+  opacity: 0.6;
+}

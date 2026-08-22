@@ -15,9 +15,18 @@ construtor.Services.AddExceptionHandler<TratadorGlobalDeExcecoes>();
 construtor.Services.AdicionarInfraestrutura(construtor.Configuration);
 construtor.Services.AddScoped<ServicoNotasFiscais>();
 
+const string PoliticaCors = "frontend";
+
+construtor.Services.AddCors(opcoes =>
+    opcoes.AddPolicy(PoliticaCors, politica => politica
+        .WithOrigins("http://localhost:4200")
+        .AllowAnyHeader()
+        .AllowAnyMethod()));
+
 var app = construtor.Build();
 
 app.UseExceptionHandler();
+app.UseCors(PoliticaCors);
 
 if (app.Environment.IsDevelopment())
 {
