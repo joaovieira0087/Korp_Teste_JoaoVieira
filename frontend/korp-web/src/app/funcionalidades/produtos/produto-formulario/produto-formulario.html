@@ -1,0 +1,40 @@
+<h2 mat-dialog-title>{{ edicao ? 'Editar produto' : 'Novo produto' }}</h2>
+
+<mat-dialog-content [formGroup]="formulario" class="formulario">
+
+  <mat-form-field appearance="outline">
+    <mat-label>Código</mat-label>
+    <input matInput formControlName="codigo" maxlength="30">
+    @if (formulario.controls.codigo.hasError('required')) {
+    <mat-error>O código é obrigatório.</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Descrição</mat-label>
+    <input matInput formControlName="descricao" maxlength="200">
+    @if (formulario.controls.descricao.hasError('required')) {
+    <mat-error>A descrição é obrigatória.</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Saldo</mat-label>
+    <input matInput type="number" formControlName="saldo" min="0">
+    @if (formulario.controls.saldo.hasError('min')) {
+    <mat-error>O saldo não pode ser negativo.</mat-error>
+    }
+  </mat-form-field>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()" [disabled]="salvando()">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="salvar()" [disabled]="salvando()">
+    @if (salvando()) {
+    <mat-spinner diameter="20" />
+    } @else {
+    Salvar
+    }
+  </button>
+</mat-dialog-actions>

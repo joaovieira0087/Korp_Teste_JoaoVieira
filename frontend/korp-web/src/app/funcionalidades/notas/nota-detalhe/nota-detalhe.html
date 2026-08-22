@@ -1,0 +1,122 @@
+<a mat-button routerLink="/notas">
+  <mat-icon>arrow_back</mat-icon>
+  Voltar
+</a>
+
+@if (carregando()) {
+<mat-progress-spinner mode="indeterminate" diameter="40" />
+}
+
+@if (nota(); as notaAtual) {
+
+<mat-card class="cartao">
+  <mat-card-header>
+    <mat-card-title>Nota fiscal {{ notaAtual.numero }}</mat-card-title>
+    <mat-card-subtitle>
+      Criada em {{ notaAtual.criadaEm | date:'dd/MM/yyyy HH:mm' }}
+      @if (notaAtual.fechadaEm) {
+      · Fechada em {{ notaAtual.fechadaEm | date:'dd/MM/yyyy HH:mm' }}
+      }
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <span class="etiqueta"
+          [class.etiqueta-fechada]="notaAtual.status === 'Fechada'">
+      {{ notaAtual.status }}
+    </span>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button mat-flat-button color="primary"
+            (click)="imprimir()"
+            [disabled]="!podeImprimir() || imprimindo()">
+      @if (imprimindo()) {
+      <mat-spinner diameter="20" />
+      <span class="texto-botao">Processando...</span>
+      } @else {
+      <mat-icon>print</mat-icon>
+      <span class="texto-botao">Imprimir nota</span>
+      }
+    </button>
+  </mat-card-actions>
+</mat-card>
+
+  @if (podeEditar()) {
+<mat-card class="cartao">
+  <mat-card-title class="titulo-secao">Adicionar produto</mat-card-title>
+
+  <mat-card-content [formGroup]="formularioItem" class="linha-formulario">
+    <mat-form-field appearance="outline" class="campo-produto">
+      <mat-label>Produto</mat-label>
+      <mat-select formControlName="produtoId" #seletorProduto>
+        @for (produto of produtos(); track produto.id) {
+        <mat-option [value]="produto.id" [disabled]="produto.saldo === 0">
+          {{ produto.codigo }} — {{ produto.descricao }} (saldo: {{ produto.saldo }})
+        </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="campo-quantidade">
+      <mat-label>Quantidade</mat-label>
+      <input matInput type="number" formControlName="quantidade" min="1">
+    </mat-form-field>
+
+    <button mat-flat-button color="primary"
+            (click)="adicionarItem()"
+            [disabled]="adicionando()">
+      <mat-icon>add</mat-icon>
+      Adicionar
+    </button>
+  </mat-card-content>
+</mat-card>
+  }
+
+<mat-card class="cartao">
+  <mat-card-title class="titulo-secao">
+    Itens ({{ notaAtual.quantidadeTotal }} unidades)
+  </mat-card-title>
+
+  <mat-card-content>
+    @if (notaAtual.itens.length === 0) {
+    <p class="vazio">Nenhum item. Adicione produtos antes de imprimir.</p>
+    } @else {
+    <table mat-table [dataSource]="notaAtual.itens" class="tabela">
+
+      <ng-container matColumnDef="codigo">
+        <th mat-header-cell *matHeaderCellDef>Código</th>
+        <td mat-cell *matCellDef="let item">{{ item.codigoProduto }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="descricao">
+        <th mat-header-cell *matHeaderCellDef>Descrição</th>
+        <td mat-cell *matCellDef="let item">{{ item.descricaoProduto }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="quantidade">
+        <th mat-header-cell *matHeaderCellDef class="alinhado-direita">Qtd.</th>
+        <td mat-cell *matCellDef="let item" class="alinhado-direita">
+          {{ item.quantidade }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acoes">
+        <th mat-header-cell *matHeaderCellDef class="alinhado-direita"></th>
+        <td mat-cell *matCellDef="let item" class="alinhado-direita">
+          @if (podeEditar()) {
+          <button mat-icon-button (click)="removerItem(item.produtoId)"
+                  aria-label="Remover item">
+            <mat-icon>delete</mat-icon>
+          </button>
+          }
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+      <tr mat-row *matRowDef="let linha; columns: colunas;"></tr>
+    </table>
+    }
+  </mat-card-content>
+</mat-card>
+}

@@ -1,0 +1,74 @@
+<div class="cabecalho">
+  <h2>Notas fiscais</h2>
+  <button mat-flat-button color="primary" (click)="criarNota()" [disabled]="criando()">
+    <mat-icon>note_add</mat-icon>
+    Nova nota
+  </button>
+</div>
+
+<mat-button-toggle-group [value]="filtro"
+                         (change)="aoTrocarFiltro($event.value)"
+                         hideSingleSelectionIndicator>
+  <mat-button-toggle value="">Todas</mat-button-toggle>
+  <mat-button-toggle value="Aberta">Abertas</mat-button-toggle>
+  <mat-button-toggle value="Fechada">Fechadas</mat-button-toggle>
+</mat-button-toggle-group>
+
+@if (carregando()) {
+<mat-progress-bar mode="indeterminate" />
+}
+
+<table mat-table [dataSource]="notas()" class="tabela">
+
+  <ng-container matColumnDef="numero">
+    <th mat-header-cell *matHeaderCellDef>Número</th>
+    <td mat-cell *matCellDef="let nota"><strong>{{ nota.numero }}</strong></td>
+  </ng-container>
+
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef>Status</th>
+    <td mat-cell *matCellDef="let nota">
+      <span class="etiqueta" [class.etiqueta-fechada]="nota.status === 'Fechada'">
+        {{ nota.status }}
+      </span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="itens">
+    <th mat-header-cell *matHeaderCellDef class="alinhado-direita">Produtos</th>
+    <td mat-cell *matCellDef="let nota" class="alinhado-direita">
+      {{ nota.itens.length }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="quantidade">
+    <th mat-header-cell *matHeaderCellDef class="alinhado-direita">Qtd. total</th>
+    <td mat-cell *matCellDef="let nota" class="alinhado-direita">
+      {{ nota.quantidadeTotal }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="criadaEm">
+    <th mat-header-cell *matHeaderCellDef>Criada em</th>
+    <td mat-cell *matCellDef="let nota">
+      {{ nota.criadaEm | date:'dd/MM/yyyy HH:mm' }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="acoes">
+    <th mat-header-cell *matHeaderCellDef class="alinhado-direita">Ações</th>
+    <td mat-cell *matCellDef="let nota" class="alinhado-direita">
+      <button mat-icon-button (click)="abrir(nota)" aria-label="Abrir nota">
+        <mat-icon>open_in_new</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+  <tr mat-row *matRowDef="let linha; columns: colunas;" class="linha-clicavel"
+      (click)="abrir(linha)"></tr>
+</table>
+
+@if (!carregando() && notas().length === 0) {
+<p class="vazio">Nenhuma nota fiscal encontrada.</p>
+}
