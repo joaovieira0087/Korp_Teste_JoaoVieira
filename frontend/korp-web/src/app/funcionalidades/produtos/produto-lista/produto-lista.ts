@@ -12,6 +12,7 @@ import { Subject, debounceTime, distinctUntilChanged, switchMap, takeUntil } fro
 import { Produto } from '../../../nucleo/modelos/produto';
 import { NotificacaoService } from '../../../nucleo/servicos/notificacao.service';
 import { ProdutoService } from '../../../nucleo/servicos/produto.service';
+import { ConfirmacaoDialogComponent } from '../../../compartilhado/confirmacao-dialog.component';
 import { ProdutoFormulario } from '../produto-formulario/produto-formulario';
 
 @Component({
@@ -91,13 +92,22 @@ export class ProdutoLista implements OnInit, OnDestroy {
   }
 
   excluir(produto: Produto): void {
-    if (!confirm(`Excluir o produto ${produto.codigo}?`)) return;
-
-    this.produtoService.excluir(produto.id)
+    this.dialogo
+      .open(ConfirmacaoDialogComponent, {
+        width: '380px',
+        data: { mensagem: `Tem certeza que deseja excluir o produto ${produto.codigo}?` }
+      })
+      .afterClosed()
       .pipe(takeUntil(this.destruido$))
-      .subscribe(() => {
-        this.notificacao.sucesso(`Produto ${produto.codigo} excluído.`);
-        this.carregar();
+      .subscribe(confirmado => {
+        if (confirmado) {
+          this.produtoService.excluir(produto.id)
+            .pipe(takeUntil(this.destruido$))
+            .subscribe(() => {
+              this.notificacao.sucesso(`Produto ${produto.codigo} excluído.`);
+              this.carregar();
+            });
+        }
       });
   }
 }
