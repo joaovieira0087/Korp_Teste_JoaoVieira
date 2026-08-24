@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ItemRequisicao, NotaFiscal, StatusNotaFiscal } from '../modelos/nota-fiscal';
+import { Analise, TextoGerado } from '../modelos/ia';
 
 @Injectable({ providedIn: 'root' })
 export class NotaFiscalService {
@@ -37,5 +38,13 @@ export class NotaFiscalService {
 
   imprimir(id: string): Observable<NotaFiscal> {
     return this.http.post<NotaFiscal>(`${this.url}/${id}/imprimir`, {});
+  }
+
+  resumir(id: string): Observable<TextoGerado> {
+    return this.http.get<TextoGerado>(`${this.url}/${id}/resumo`);
+  }
+
+  analisar(): Observable<Analise> {
+    return this.http.get<Analise>(`${this.url}/analise`);
   }
 }

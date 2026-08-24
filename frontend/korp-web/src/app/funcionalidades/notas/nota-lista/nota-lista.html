@@ -14,6 +14,53 @@
   <mat-button-toggle value="Fechada">Fechadas</mat-button-toggle>
 </mat-button-toggle-group>
 
+<mat-card class="cartao-analise">
+  <mat-card-content>
+    @if (analise(); as resultado) {
+    <div class="topo-sugestao">
+      <span class="rotulo">Análise do faturamento</span>
+      <app-selo-origem [origem]="resultado.analise.origem" />
+    </div>
+    <div class="metricas">
+      <div class="metrica">
+        <span class="numero">{{ resultado.metricas.totalNotas }}</span>
+        <span class="legenda">notas</span>
+      </div>
+      <div class="metrica">
+        <span class="numero">{{ resultado.metricas.fechadas }}</span>
+        <span class="legenda">fechadas</span>
+      </div>
+      <div class="metrica">
+        <span class="numero">{{ resultado.metricas.abertas }}</span>
+        <span class="legenda">abertas</span>
+      </div>
+      <div class="metrica">
+        <span class="numero">{{ resultado.metricas.unidadesFaturadas }}</span>
+        <span class="legenda">un. faturadas</span>
+      </div>
+      <div class="metrica">
+        <span class="numero">{{ resultado.metricas.unidadesPendentes }}</span>
+        <span class="legenda">un. pendentes</span>
+      </div>
+    </div>
+    <p class="texto-ia">{{ resultado.analise.texto }}</p>
+    <button mat-button (click)="gerarAnalise()" [disabled]="analisando()">
+      <mat-icon>refresh</mat-icon> Atualizar análise
+    </button>
+    } @else {
+    <button mat-stroked-button (click)="gerarAnalise()" [disabled]="analisando()">
+      @if (analisando()) {
+      <mat-spinner diameter="18" />
+      <span class="texto-botao">Analisando...</span>
+      } @else {
+      <mat-icon>insights</mat-icon>
+      <span class="texto-botao">Analisar faturamento</span>
+      }
+    </button>
+    }
+  </mat-card-content>
+</mat-card>
+
 @if (carregando()) {
 <mat-progress-bar mode="indeterminate" />
 }

@@ -15,6 +15,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { Subject, finalize, takeUntil } from 'rxjs';
 
+import { SeloOrigem } from '../../../nucleo/componentes/selo-origem/selo-origem';
+import { TextoGerado } from '../../../nucleo/modelos/ia';
 import { NotaFiscal } from '../../../nucleo/modelos/nota-fiscal';
 import { Produto } from '../../../nucleo/modelos/produto';
 import { NotaFiscalService } from '../../../nucleo/servicos/nota-fiscal.service';
@@ -27,7 +29,7 @@ import { NotificacaoService } from '../../../nucleo/servicos/notificacao.service
   imports: [
     DatePipe, ReactiveFormsModule, RouterLink, MatCardModule, MatTableModule,
     MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule,
-    MatSelectModule, MatProgressSpinnerModule
+    MatSelectModule, MatProgressSpinnerModule, SeloOrigem
   ],
   templateUrl: './nota-detalhe.html',
   styleUrl: './nota-detalhe.scss'
@@ -48,6 +50,10 @@ export class NotaDetalhe implements OnInit, AfterViewInit, OnDestroy {
   readonly carregando = signal(false);
   readonly adicionando = signal(false);
   readonly imprimindo = signal(false);
+
+  readonly resumo = signal<TextoGerado | null>(null);
+  readonly resumindo = signal(false);
+
   readonly podeEditar = computed(() => this.nota()?.status === 'Aberta');
   readonly podeImprimir = computed(() => {
     const nota = this.nota();
@@ -121,6 +127,17 @@ export class NotaDetalhe implements OnInit, AfterViewInit, OnDestroy {
         this.notificacao.sucesso(
           `Nota ${atualizada.numero} impressa. Saldo dos produtos atualizado.`);
       });
+  }
+
+  gerarResumo(): void {
+    const nota = this.nota();
+    if (!nota) return;
+
+    this.resumindo.set(true);
+
+    this.notaService.resumir(nota.id)
+      .pipe(finalize(() => this.resumindo.set(false)), takeUntil(this.destruido$))
+      .subscribe(resposta => this.resumo.set(resposta));
   }
 
   saldoDe(produtoId: string): number | null {
