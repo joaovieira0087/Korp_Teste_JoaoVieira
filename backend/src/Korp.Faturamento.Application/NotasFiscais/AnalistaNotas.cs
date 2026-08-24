@@ -43,6 +43,10 @@ public sealed class AnalistaNotas(
         - Não repita todos os números; interprete-os.
         """;
 
+    public async Task<MetricasFaturamento> ObterMetricasAsync(
+        CancellationToken cancelamento)
+        => CalcularMetricas(await repositorio.ListarAsync(null, cancelamento));
+
     public async Task<TextoGerado> ResumirNotaAsync(
         Guid id, CancellationToken cancelamento)
     {
@@ -72,7 +76,6 @@ public sealed class AnalistaNotas(
 
         return new AnaliseResposta(metricas, analise);
     }
-
 
     private static MetricasFaturamento CalcularMetricas(IReadOnlyList<NotaFiscal> notas)
     {
@@ -163,7 +166,7 @@ public sealed class AnalistaNotas(
                $"com {m.QuantidadeDoProdutoTop} unidades." + alerta;
     }
 
-    private static string Sanitizar(string texto)
+    public static string Sanitizar(string texto)
     {
         var limpo = texto
             .Replace("**", string.Empty).Replace("*", string.Empty)

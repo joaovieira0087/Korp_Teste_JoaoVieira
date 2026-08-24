@@ -45,4 +45,9 @@ public sealed class ProdutosController(ServicoProdutos servico) : ControllerBase
     SugestaoDescricaoRequisicao requisicao,
     CancellationToken cancelamento)
     => Ok(await assistente.SugerirAsync(requisicao, cancelamento));
+
+    [HttpGet("resumo")]
+    public async Task<ActionResult<ResumoEstoqueResposta>> Resumo(
+    [FromServices] IProdutoRepositorio repositorio, CancellationToken cancelamento)
+    => Ok(await repositorio.ObterResumoAsync(cancelamento));
 }

@@ -1,0 +1,112 @@
+<div class="dashboard-container">
+  <h2 class="titulo-pagina">Visão geral</h2>
+
+  @if (carregando() && !dados()) {
+  <div class="centralizado">
+    <mat-progress-spinner mode="indeterminate" diameter="40" />
+  </div>
+  }
+
+  @if (dados(); as painel) {
+  <!-- Card Destaque IA -->
+  <div class="card-destaque-ia">
+    <div class="topo-ia">
+      <div class="tag-ia">
+        <mat-icon>auto_awesome</mat-icon>
+        <span>Visão Geral do Sistema</span>
+      </div>
+      <app-selo-origem [origem]="painel.resumo.origem" />
+    </div>
+
+    <p class="texto-ia">{{ painel.resumo.texto }}</p>
+
+    <button mat-stroked-button (click)="carregar()" [disabled]="carregando()">
+      @if (carregando()) {
+      <mat-spinner diameter="18" />
+      <span>Atualizando...</span>
+      } @else {
+      <mat-icon>refresh</mat-icon>
+      <span>Atualizar análise</span>
+      }
+    </button>
+  </div>
+
+  @if (!painel.estoqueDisponivel) {
+  <div class="aviso-erro">
+    <mat-icon>cloud_off</mat-icon>
+    <span>O serviço de estoque está indisponível. Exibindo apenas dados de faturamento.</span>
+  </div>
+  }
+
+  <!-- Grid do Dashboard (Faturamento e Estoque lado a lado) -->
+  <div class="grid-dashboard">
+
+    <!-- Bloco de Faturamento -->
+    <div class="secao-card">
+      <div class="cabecalho-secao">
+        <div class="titulo-secao">
+          <mat-icon class="icone-faturamento">receipt_long</mat-icon>
+          <h3>Faturamento</h3>
+        </div>
+        <a mat-button color="primary" routerLink="/notas">
+          Ver notas <mat-icon>chevron_right</mat-icon>
+        </a>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-box">
+          <span class="kpi-valor">{{ painel.faturamento.totalNotas }}</span>
+          <span class="kpi-label">Total notas</span>
+        </div>
+        <div class="kpi-box sucesso">
+          <span class="kpi-valor">{{ painel.faturamento.fechadas }}</span>
+          <span class="kpi-label">Fechadas</span>
+        </div>
+        <div class="kpi-box alerta">
+          <span class="kpi-valor">{{ painel.faturamento.abertas }}</span>
+          <span class="kpi-label">Abertas</span>
+        </div>
+        <div class="kpi-box">
+          <span class="kpi-valor">{{ painel.faturamento.unidadesFaturadas }}</span>
+          <span class="kpi-label">Un. faturadas</span>
+        </div>
+        <div class="kpi-box">
+          <span class="kpi-valor">{{ painel.faturamento.unidadesPendentes }}</span>
+          <span class="kpi-label">Un. pendentes</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloco de Estoque -->
+    @if (painel.estoque; as estoque) {
+    <div class="secao-card">
+      <div class="cabecalho-secao">
+        <div class="titulo-secao">
+          <mat-icon class="icone-estoque">inventory_2</mat-icon>
+          <h3>Estoque</h3>
+        </div>
+        <a mat-button color="primary" routerLink="/produtos">
+          Ver produtos <mat-icon>chevron_right</mat-icon>
+        </a>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-box">
+          <span class="kpi-valor">{{ estoque.totalProdutos }}</span>
+          <span class="kpi-label">Produtos</span>
+        </div>
+        <div class="kpi-box">
+          <span class="kpi-valor">{{ estoque.saldoTotal }}</span>
+          <span class="kpi-label">Un. em estoque</span>
+        </div>
+        <div class="kpi-box" [class.perigo]="estoque.produtosSemEstoque > 0">
+          <span class="kpi-valor">{{ estoque.produtosSemEstoque }}</span>
+          <span class="kpi-label">Sem estoque</span>
+        </div>
+      </div>
+    </div>
+    }
+
+  </div>
+  }
+</div>

@@ -60,6 +60,20 @@ public sealed class ProdutoRepositorio(EstoqueDbContext contexto) : IProdutoRepo
             .ToListAsync(cancelamento);
     }
 
+    public async Task<ResumoEstoqueResposta> ObterResumoAsync(
+    CancellationToken cancelamento)
+    {
+        var resumo = await contexto.Produtos
+            .GroupBy(p => 1)
+            .Select(g => new ResumoEstoqueResposta(
+                g.Count(),
+                g.Sum(p => p.Saldo),
+                g.Sum(p => p.Saldo == 0 ? 1 : 0)))
+            .FirstOrDefaultAsync(cancelamento);
+
+        return resumo ?? new ResumoEstoqueResposta(0, 0, 0);
+    }
+
     public async Task<BaixaProcessada?> ObterBaixaProcessadaAsync(
         Guid notaFiscalId, CancellationToken cancelamento)
         => await contexto.BaixasProcessadas

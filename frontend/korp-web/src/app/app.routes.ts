@@ -1,7 +1,13 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'produtos', pathMatch: 'full' },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  {
+    path: 'dashboard',
+    loadComponent: () =>
+      import('./funcionalidades/dashboard/dashboard').then(m => m.Dashboard),
+    title: 'Visão geral | Korp'
+  },
   {
     path: 'produtos',
     loadComponent: () =>
@@ -23,5 +29,5 @@ export const routes: Routes = [
         .then(m => m.NotaDetalhe),
     title: 'Nota fiscal | Korp'
   },
-  { path: '**', redirectTo: 'produtos' }
+  { path: '**', redirectTo: 'dashboard' }
 ];
