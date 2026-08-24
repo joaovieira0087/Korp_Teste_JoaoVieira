@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AtualizarProduto, CriarProduto, Produto } from '../modelos/produto';
+import { SugestaoDescricao } from '../modelos/ia';
 
 @Injectable({ providedIn: 'root' })
 export class ProdutoService {
@@ -24,7 +25,7 @@ export class ProdutoService {
   }
 
   criar(produto: CriarProduto): Observable<Produto> {
-    return this.http.post<Produto>(this.url, produto);
+    return this.http.post<Produto>(this.url, produto);  
   }
 
   atualizar(id: string, produto: AtualizarProduto): Observable<Produto> {
@@ -33,5 +34,11 @@ export class ProdutoService {
 
   excluir(id: string): Observable<void> {
     return this.http.delete<void>(`${this.url}/${id}`);
+  }
+
+  sugerirDescricao(textoBase: string): Observable<SugestaoDescricao> {
+    return this.http.post<SugestaoDescricao>(
+      `${this.url}/assistente/descricao`, { textoBase }
+    );
   }
 }

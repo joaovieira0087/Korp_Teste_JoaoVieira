@@ -40,3 +40,73 @@ body {
 .snack-erro {
   --mdc-snackbar-container-color: #b00020;
 }
+
+.linha-assistente {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.caixa-sugestao {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border: 1px dashed #b39ddb;
+  border-radius: 8px;
+  background: #faf7ff;
+}
+
+.topo-sugestao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.rotulo {
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.texto-sugestao {
+  margin: 0 0 0.5rem;
+  line-height: 1.5;
+}
+
+.acoes-sugestao {
+  display: flex;
+  gap: 0.25rem;
+  justify-content: flex-end;
+}
+
+.cartao-analise {
+  margin-top: 1rem;
+}
+
+.texto-ia {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.metricas {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.metrica {
+  display: flex;
+  flex-direction: column;
+}
+
+.numero {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.legenda {
+  font-size: 0.75rem;
+  opacity: 0.65;
+}

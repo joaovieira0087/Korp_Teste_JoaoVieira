@@ -18,6 +18,36 @@
     }
   </mat-form-field>
 
+  <div class="linha-assistente">
+    <button mat-stroked-button type="button"
+            (click)="sugerirDescricao()" [disabled]="sugerindo()">
+      @if (sugerindo()) {
+      <mat-spinner diameter="18" />
+      <span class="texto-botao">Gerando...</span>
+      } @else {
+      <mat-icon>auto_awesome</mat-icon>
+      <span class="texto-botao">Sugerir descrição</span>
+      }
+    </button>
+  </div>
+  @if (sugestao(); as sugerida) {
+  <div class="caixa-sugestao">
+    <div class="topo-sugestao">
+      <span class="rotulo">Sugestão</span>
+      <app-selo-origem [origem]="sugerida.origem" />
+    </div>
+    <p class="texto-sugestao">{{ sugerida.descricao }}</p>
+    <div class="acoes-sugestao">
+      <button mat-button color="primary" type="button" (click)="aceitarSugestao()">
+        <mat-icon>check</mat-icon> Usar
+      </button>
+      <button mat-button type="button" (click)="descartarSugestao()">
+        <mat-icon>close</mat-icon> Descartar
+      </button>
+    </div>
+  </div>
+  }
+
   <mat-form-field appearance="outline">
     <mat-label>Saldo</mat-label>
     <input matInput type="number" formControlName="saldo" min="0">

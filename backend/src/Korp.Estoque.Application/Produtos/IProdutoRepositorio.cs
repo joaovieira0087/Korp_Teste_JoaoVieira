@@ -14,14 +14,13 @@ public interface IProdutoRepositorio
 
     Task SalvarAlteracoesAsync(CancellationToken cancelamento);
 
-    Task<IReadOnlyList<Produto>> ObterPorIdsAsync(
-    IReadOnlyCollection<Guid> identificadores, CancellationToken cancelamento);
+    Task<IReadOnlyList<Produto>> ObterPorIdsAsync(IReadOnlyCollection<Guid> identificadores, CancellationToken cancelamento);
 
-    Task<IReadOnlyList<Produto>> ObterPorIdsComBloqueioAsync(
-       IReadOnlyCollection<Guid> identificadores, CancellationToken cancelamento);
+    Task<IReadOnlyList<Produto>> ObterPorIdsComBloqueioAsync(IReadOnlyCollection<Guid> identificadores, CancellationToken cancelamento);
 
-    Task<BaixaProcessada?> ObterBaixaProcessadaAsync(
-        Guid notaFiscalId, CancellationToken cancelamento);
+    Task<BaixaProcessada?> ObterBaixaProcessadaAsync(Guid notaFiscalId, CancellationToken cancelamento);
 
     Task RegistrarBaixaAsync(BaixaProcessada baixa, CancellationToken cancelamento);
+
+    Task<ResumoEstoqueResposta> ObterResumoAsync(CancellationToken cancelamento);
 }

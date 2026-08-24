@@ -42,6 +42,28 @@
   </mat-card-actions>
 </mat-card>
 
+<mat-card class="cartao">
+  <mat-card-content>
+    @if (resumo(); as textoResumo) {
+    <div class="topo-sugestao">
+      <span class="rotulo">Resumo executivo</span>
+      <app-selo-origem [origem]="textoResumo.origem" />
+    </div>
+    <p class="texto-ia">{{ textoResumo.texto }}</p>
+    } @else {
+    <button mat-stroked-button (click)="gerarResumo()" [disabled]="resumindo()">
+      @if (resumindo()) {
+      <mat-spinner diameter="18" />
+      <span class="texto-botao">Analisando...</span>
+      } @else {
+      <mat-icon>auto_awesome</mat-icon>
+      <span class="texto-botao">Gerar resumo da nota</span>
+      }
+    </button>
+    }
+  </mat-card-content>
+</mat-card>
+
   @if (podeEditar()) {
 <mat-card class="cartao">
   <mat-card-title class="titulo-secao">Adicionar produto</mat-card-title>
@@ -56,11 +78,17 @@
         </mat-option>
         }
       </mat-select>
+      @if (formularioItem.controls.produtoId.hasError('required')) {
+      <mat-error>Selecione um produto.</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="campo-quantidade">
       <mat-label>Quantidade</mat-label>
       <input matInput type="number" formControlName="quantidade" min="1">
+      @if (formularioItem.controls.quantidade.hasError('min')) {
+      <mat-error>A quantidade deve ser no mínimo 1.</mat-error>
+      }
     </mat-form-field>
 
     <button mat-flat-button color="primary"
@@ -75,7 +103,7 @@
 
 <mat-card class="cartao">
   <mat-card-title class="titulo-secao">
-    Itens ({{ notaAtual.quantidadeTotal }} unidades)
+    Itens ({{ notaAtual.quantidadeTotal }} {{ notaAtual.quantidadeTotal === 1 ? 'unidade' : 'unidades' }})
   </mat-card-title>
 
   <mat-card-content>

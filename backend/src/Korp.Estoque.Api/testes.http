@@ -1,0 +1,32 @@
+@estoque = http://localhost:5001
+@faturamento = http://localhost:5002
+
+### 1. Assistente de descrição de produto (Sucesso - 200 OK)
+POST {{estoque}}/api/produtos/assistente/descricao
+Content-Type: application/json
+
+{
+  "textoBase": "parafuso sextavado m8 aco inox"
+}
+
+###
+
+### 2. Resumo de uma nota fiscal (Sucesso - 200 OK)
+# Substitua o GUID abaixo por um ID real existente no seu banco
+GET {{faturamento}}/api/notas-fiscais/00000000-0000-0000-0000-000000000000/resumo
+
+###
+
+### 3. Análise do histórico de compras (Sucesso - 200 OK)
+GET {{faturamento}}/api/notas-fiscais/analise
+
+###
+
+### 4. Validação de erro: texto vazio (Erro esperado - 400 Bad Request)
+POST {{estoque}}/api/produtos/assistente/descricao
+Content-Type: application/json
+
+{
+  "textoBase": "   "
+}
+

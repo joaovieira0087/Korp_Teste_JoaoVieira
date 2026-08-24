@@ -3,17 +3,25 @@ using Korp.Faturamento.Infrastructure;
 using Korp.Faturamento.Infrastructure.Persistencia;
 using Korp.SharedKernel.Web;
 using Microsoft.EntityFrameworkCore;
+using Korp.SharedKernel.Ia;
+using Korp.Faturamento.Application.Dashboard;
 
 var construtor = WebApplication.CreateBuilder(args);
 
 construtor.Services.AddControllers();
 construtor.Services.AddOpenApi();
 
+
 construtor.Services.AddProblemDetails();
 construtor.Services.AddExceptionHandler<TratadorGlobalDeExcecoes>();
 
 construtor.Services.AdicionarInfraestrutura(construtor.Configuration);
 construtor.Services.AddScoped<ServicoNotasFiscais>();
+
+construtor.Services.AdicionarIa(construtor.Configuration);
+construtor.Services.AddScoped<AnalistaNotas>();
+
+construtor.Services.AddScoped<ServicoDashboard>();
 
 const string PoliticaCors = "frontend";
 

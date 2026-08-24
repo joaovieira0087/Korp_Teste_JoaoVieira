@@ -40,4 +40,14 @@ public sealed class NotasFiscaisController(ServicoNotasFiscais servico) : Contro
     public async Task<ActionResult<NotaFiscalResposta>> Imprimir(
         Guid id, CancellationToken cancelamento)
         => Ok(await servico.ImprimirAsync(id, cancelamento));
+
+    [HttpGet("analise")]
+    public async Task<ActionResult<AnaliseResposta>> Analisar(
+    [FromServices] AnalistaNotas analista, CancellationToken cancelamento)
+    => Ok(await analista.AnalisarHistoricoAsync(cancelamento));
+
+    [HttpGet("{id:guid}/resumo")]
+    public async Task<ActionResult<TextoGerado>> Resumir(
+        [FromServices] AnalistaNotas analista, Guid id, CancellationToken cancelamento)
+        => Ok(await analista.ResumirNotaAsync(id, cancelamento));
 }

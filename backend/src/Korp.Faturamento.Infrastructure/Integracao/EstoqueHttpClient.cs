@@ -41,6 +41,31 @@ public sealed class EstoqueHttpClient(
         await GarantirSucessoAsync(resposta, cancelamento);
     }
 
+    public async Task<ResumoEstoque?> ObterResumoAsync(CancellationToken cancelamento)
+    {
+        try
+        {
+            var resposta = await cliente.GetAsync("/api/produtos/resumo", cancelamento);
+
+            if (!resposta.IsSuccessStatusCode)
+            {
+                registrador.LogWarning(
+                    "Estoque respondeu {Status} no resumo; dashboard seguirá parcial.",
+                    (int)resposta.StatusCode);
+                return null;
+            }
+
+            return await resposta.Content
+                .ReadFromJsonAsync<ResumoEstoque>(cancelamento);
+        }
+        catch (Exception excecao)
+        {
+            registrador.LogWarning(excecao,
+                "Estoque indisponível para o dashboard; seguindo parcial.");
+            return null;
+        }
+    }
+
     /// <summary>
     /// Converte falhas de transporte em ExcecaoServicoIndisponivel.
     /// O que chega aqui já passou por retry, timeout e circuit breaker.

@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>595f2969-5a9c-4411-9040-eb9d0395ccc1</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Korp.Faturamento.Application\Korp.Faturamento.Application.csproj" />
     <ProjectReference Include="..\Korp.Faturamento.Infrastructure\Korp.Faturamento.Infrastructure.csproj" />
+    <ProjectReference Include="..\Korp.SharedKernel\Korp.SharedKernel.csproj" />
   </ItemGroup>
 
 </Project>

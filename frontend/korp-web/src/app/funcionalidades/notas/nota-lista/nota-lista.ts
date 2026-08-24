@@ -3,11 +3,15 @@ import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { Subject, finalize, takeUntil } from 'rxjs';
 
+import { SeloOrigem } from '../../../nucleo/componentes/selo-origem/selo-origem';
+import { Analise } from '../../../nucleo/modelos/ia';
 import { NotaFiscal, StatusNotaFiscal } from '../../../nucleo/modelos/nota-fiscal';
 import { NotaFiscalService } from '../../../nucleo/servicos/nota-fiscal.service';
 import { NotificacaoService } from '../../../nucleo/servicos/notificacao.service';
@@ -17,7 +21,8 @@ import { NotificacaoService } from '../../../nucleo/servicos/notificacao.service
   standalone: true,
   imports: [
     DatePipe, MatTableModule, MatButtonModule, MatIconModule,
-    MatProgressBarModule, MatButtonToggleModule
+    MatProgressBarModule, MatButtonToggleModule, MatProgressSpinnerModule,
+    MatCardModule, SeloOrigem
   ],
   templateUrl: './nota-lista.html',
   styleUrl: './nota-lista.scss'
@@ -32,6 +37,9 @@ export class NotaLista implements OnInit, OnDestroy {
   readonly notas = signal<NotaFiscal[]>([]);
   readonly carregando = signal(false);
   readonly criando = signal(false);
+
+  readonly analise = signal<Analise | null>(null);
+  readonly analisando = signal(false);
 
   filtro: StatusNotaFiscal | '' = '';
 
@@ -66,6 +74,13 @@ export class NotaLista implements OnInit, OnDestroy {
         this.notificacao.sucesso(`Nota ${nota.numero} criada.`);
         this.router.navigate(['/notas', nota.id]);
       });
+  }
+
+  gerarAnalise(): void {
+    this.analisando.set(true);
+    this.notaService.analisar()
+      .pipe(finalize(() => this.analisando.set(false)), takeUntil(this.destruido$))
+      .subscribe(resposta => this.analise.set(resposta));
   }
 
   abrir(nota: NotaFiscal): void {

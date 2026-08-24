@@ -5,9 +5,13 @@ import {
   MAT_DIALOG_DATA, MatDialogModule, MatDialogRef
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { finalize } from 'rxjs';
 
+import { SeloOrigem } from '../../../nucleo/componentes/selo-origem/selo-origem'; // Ajuste o caminho conforme seu projeto
+import { SugestaoDescricao } from '../../../nucleo/modelos/ia';
 import { Produto } from '../../../nucleo/modelos/produto';
 import { NotificacaoService } from '../../../nucleo/servicos/notificacao.service';
 import { ProdutoService } from '../../../nucleo/servicos/produto.service';
@@ -16,8 +20,14 @@ import { ProdutoService } from '../../../nucleo/servicos/produto.service';
   selector: 'app-produto-formulario',
   standalone: true,
   imports: [
-    ReactiveFormsModule, MatDialogModule, MatFormFieldModule,
-    MatInputModule, MatButtonModule, MatProgressSpinnerModule
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    MatIconModule,
+    SeloOrigem
   ],
   templateUrl: './produto-formulario.html'
 })
@@ -30,6 +40,9 @@ export class ProdutoFormulario {
   readonly produto = inject<Produto | null>(MAT_DIALOG_DATA);
   readonly edicao = this.produto !== null;
   readonly salvando = signal(false);
+
+  readonly sugerindo = signal(false);
+  readonly sugestao = signal<SugestaoDescricao | null>(null);
 
   readonly formulario = this.fb.nonNullable.group({
     codigo: [
@@ -70,6 +83,36 @@ export class ProdutoFormulario {
       },
       error: () => this.salvando.set(false)
     });
+  }
+
+  sugerirDescricao(): void {
+    const base = this.formulario.controls.descricao.value?.trim()
+      || this.formulario.getRawValue().codigo?.trim();
+
+    if (!base) {
+      this.notificacao.erro('Escreva um nome ou código antes de pedir a sugestão.');
+      return;
+    }
+
+    this.sugerindo.set(true);
+    this.sugestao.set(null);
+
+    this.produtoService.sugerirDescricao(base)
+      .pipe(finalize(() => this.sugerindo.set(false)))
+      .subscribe(resposta => this.sugestao.set(resposta));
+  }
+
+  aceitarSugestao(): void {
+    const sugerida = this.sugestao();
+    if (!sugerida) return;
+
+    this.formulario.controls.descricao.setValue(sugerida.descricao);
+    this.formulario.controls.descricao.markAsDirty();
+    this.sugestao.set(null);
+  }
+
+  descartarSugestao(): void {
+    this.sugestao.set(null);
   }
 
   cancelar(): void {
