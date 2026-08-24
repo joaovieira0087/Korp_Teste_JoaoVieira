@@ -56,11 +56,17 @@
         </mat-option>
         }
       </mat-select>
+      @if (formularioItem.controls.produtoId.hasError('required')) {
+      <mat-error>Selecione um produto.</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="campo-quantidade">
       <mat-label>Quantidade</mat-label>
       <input matInput type="number" formControlName="quantidade" min="1">
+      @if (formularioItem.controls.quantidade.hasError('min')) {
+      <mat-error>A quantidade deve ser no mínimo 1.</mat-error>
+      }
     </mat-form-field>
 
     <button mat-flat-button color="primary"
@@ -75,7 +81,7 @@
 
 <mat-card class="cartao">
   <mat-card-title class="titulo-secao">
-    Itens ({{ notaAtual.quantidadeTotal }} unidades)
+    Itens ({{ notaAtual.quantidadeTotal }} {{ notaAtual.quantidadeTotal === 1 ? 'unidade' : 'unidades' }})
   </mat-card-title>
 
   <mat-card-content>
