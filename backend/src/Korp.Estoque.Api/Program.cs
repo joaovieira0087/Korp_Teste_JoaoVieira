@@ -7,6 +7,7 @@ using Korp.Estoque.Infrastructure;
 using Korp.Estoque.Infrastructure.Persistencia;
 using Korp.SharedKernel.Web;
 using Microsoft.EntityFrameworkCore;
+using Korp.SharedKernel.Ia;
 
 var construtor = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,10 @@ construtor.Services.AddScoped<ServicoProdutos>();
 construtor.Services.AddSingleton<ControleDeFalha>();
 construtor.Services.AddScoped<ServicoBaixas>();
 construtor.Services.AddScoped<IUnidadeDeTrabalho, UnidadeDeTrabalho>();
+
+// Ia
+construtor.Services.AdicionarIa(construtor.Configuration);
+construtor.Services.AddScoped<AssistenteDescricao>();
 
 const string PoliticaCors = "frontend";
 

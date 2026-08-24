@@ -1,6 +1,7 @@
 ﻿using Korp.Estoque.Application.Produtos;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace Korp.Estoque.Api.Controllers;
 
 [ApiController]
@@ -37,4 +38,11 @@ public sealed class ProdutosController(ServicoProdutos servico) : ControllerBase
         await servico.ExcluirAsync(id, cancelamento);
         return NoContent();
     }
+
+    [HttpPost("assistente/descricao")]
+    public async Task<ActionResult<SugestaoDescricaoResposta>> SugerirDescricao(
+    [FromServices] AssistenteDescricao assistente,
+    SugestaoDescricaoRequisicao requisicao,
+    CancellationToken cancelamento)
+    => Ok(await assistente.SugerirAsync(requisicao, cancelamento));
 }

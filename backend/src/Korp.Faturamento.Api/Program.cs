@@ -3,6 +3,7 @@ using Korp.Faturamento.Infrastructure;
 using Korp.Faturamento.Infrastructure.Persistencia;
 using Korp.SharedKernel.Web;
 using Microsoft.EntityFrameworkCore;
+using Korp.SharedKernel.Ia;
 
 var construtor = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,9 @@ construtor.Services.AddExceptionHandler<TratadorGlobalDeExcecoes>();
 
 construtor.Services.AdicionarInfraestrutura(construtor.Configuration);
 construtor.Services.AddScoped<ServicoNotasFiscais>();
+
+construtor.Services.AdicionarIa(construtor.Configuration);
+construtor.Services.AddScoped<AnalistaNotas>();
 
 const string PoliticaCors = "frontend";
 
