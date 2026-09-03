@@ -1,7 +1,5 @@
 # Korp — Sistema de emissão de Notas Fiscais
 
- **C# + Angular**.
-
 Sistema de emissão de notas fiscais construído em arquitetura de microsserviços, com controle de estoque, faturamento, tratamento de falhas entre serviços e recursos de IA.
 
 ---
